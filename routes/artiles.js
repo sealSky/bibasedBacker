@@ -56,7 +56,7 @@ router.post('/reviseArticle', (req, res) => {
   let params = req.body;
   console.log(params);
   // 查询昵称
-  conn.query(sqlAll.reviseArticle, [params.title, params.body, params.id], (err, result) => {
+  conn.query(sqlAll.reviseArticle, [params.title, params.body, params.text, params.id], (err, result) => {
     if(err) {
       console.log(err);
       console.log('修改错误');
@@ -71,7 +71,7 @@ router.post('/reviseArticle', (req, res) => {
   })
 });
 
-//获取所有文章接口
+//获取用户所有文章接口
 router.post('/getArticles', (req, res) => {
   let params = req.body;
   // 查询昵称
@@ -81,6 +81,23 @@ router.post('/getArticles', (req, res) => {
     }
     if (result) {
         // console.log(result);
+        res.json({
+            result
+        });
+    }
+  })
+});
+
+//获取用户所有文章接口
+router.post('/getArticleAll', (req, res) => {
+  let params = req.body;
+  // 查询昵称
+  conn.query(sqlAll.selectAll, (err, result) => {
+    if(err) {
+      console.log(err);
+    }
+    if (result) {
+        console.log(result);
         res.json({
             result
         });

@@ -10,9 +10,10 @@ var sqlMap = {
     article: {
         add: 'insert into articles(title, body, user_id) values (?, ?, ?)',
         selects: 'SELECT * FROM articles WHERE find_in_set(?, user_id)',
+        selectAll: 'SELECT * FROM articles',
         select: 'SELECT * FROM articles WHERE find_in_set(?, id)',
         deleteArticle: 'DELETE FROM articles WHERE user_id = ? and id = ?',
-        reviseArticle: 'UPDATE articles SET title = ? , body = ? WHERE id = ?'
+        reviseArticle: 'UPDATE articles SET title = ? , body = ?, text = ? WHERE id = ?'
     }
 }
 
