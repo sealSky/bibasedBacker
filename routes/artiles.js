@@ -45,7 +45,7 @@ router.post('/newArticle', (req, res) => {
     } 
     // 数据库返回符合要求的文章数组
     if (result) {
-        console.log(result);
+        // console.log(result);
         res.json('新增成功');
     }
   })
@@ -97,7 +97,7 @@ router.post('/getArticleAll', (req, res) => {
       console.log(err);
     }
     if (result) {
-        console.log(result);
+        // console.log(result);
         res.json({
             result
         });
