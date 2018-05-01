@@ -1,6 +1,7 @@
 let express = require('express');
 let router = express.Router();
 let $sql = require('../sql/sqlMap.js');
+let util = require('../public/javascripts/common.js');
 
 // 引用数据库
 let models = require('../sql/db.js');
@@ -11,18 +12,7 @@ conn.connect();
 
 // 注入sql语句
 let sqlAll = $sql.article;
-
-// 写入方法
-let jsonWrite = function(res, ret) {
-  if(typeof ret === 'undefined') {
-      res.json({
-          code: '1',
-          msg: '操作失败'
-      });
-  } else {
-      res.json(ret);
-  }
-};
+let sqlUser = $sql.user;
 
 // 对象拷贝方法
 function copyObject(obj1) {
@@ -33,12 +23,23 @@ function copyObject(obj1) {
   return obj2;
 }
 
-//发布文章接口
+function copyArr (arr){
+  return arr.map((e)=>{
+      if(typeof e === 'object'){
+          return Object.assign({},e)
+      }else{
+          return e
+      }
+  })
+}
+
+//新增文章接口
 router.post('/newArticle', (req, res) => {
   let params = req.body;
   console.log(params);
   // 查询昵称
-  conn.query(sqlAll.add, [params.title, params.body, params.user_id], (err, result) => {
+  
+  conn.query(sqlAll.add, [params.title, params.body, params.user_id, params.created_at], (err, result) => {
     if(err) {
       console.log(err);
       console.log('新增错误');
@@ -56,7 +57,7 @@ router.post('/reviseArticle', (req, res) => {
   let params = req.body;
   console.log(params);
   // 查询昵称
-  conn.query(sqlAll.reviseArticle, [params.title, params.body, params.text, params.id], (err, result) => {
+  conn.query(sqlAll.reviseArticle, [params.title, params.body, params.text, params.updated_at, params.id ], (err, result) => {
     if(err) {
       console.log(err);
       console.log('修改错误');
@@ -88,22 +89,35 @@ router.post('/getArticles', (req, res) => {
   })
 });
 
-//获取用户所有文章接口
+//获取所有用户的文章接口
 router.post('/getArticleAll', (req, res) => {
   let params = req.body;
-  // 查询昵称
   conn.query(sqlAll.selectAll, (err, result) => {
+    let articleAll = JSON.parse(JSON.stringify(result));
     if(err) {
       console.log(err);
     }
     if (result) {
-        // console.log(result);
-        res.json({
-            result
-        });
+      result.forEach((item, index) => {
+        conn.query(sqlUser.selectId, [item.user_id], (error, users) => {
+          if (users) {
+            item.author = JSON.parse(JSON.stringify(users[0]));
+            result[index] = item;
+            if (index+1 === result.length) {
+              res.json({
+                result
+              })
+            }
+        }
+        })
+      });
     }
   })
+
+
+ 
 });
+
 
 // 获取单个文章
 router.post('/getArticle', (req, res) => {
@@ -131,7 +145,7 @@ router.post('/deleteArticle', (req, res) => {
       console.log(err);
     }
     if (result) {
-      console.log(result);
+      // console.log(result);
         res.send('删除成功');
     }
   })
