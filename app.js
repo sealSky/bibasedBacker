@@ -9,12 +9,6 @@ let usersRouter = require('./routes/users');
 let artilesRouter = require('./routes/artiles');
 
 // // 引用数据库
-// let models = require('./sql/db.js');
-// let mysql = require('mysql');
-
-// // 连接数据库
-// let conn = mysql.createConnection(models.mysql);
-// conn.connect();
 
 let app = express();
 
